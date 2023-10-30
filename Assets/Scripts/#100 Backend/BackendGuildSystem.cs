@@ -9,6 +9,8 @@ public class BackendGuildSystem : MonoBehaviour
     private FadeEffect_TMP textLog;
     [SerializeField]
     private GuildCreatePage guildCreatePage;
+    [SerializeField]
+    private GuildApplicantsPage guildApplicantsPage;
 
     public void CreateGuild(string guildName, int goodsCount = 1)
     {
@@ -70,6 +72,9 @@ public class BackendGuildSystem : MonoBehaviour
                     return;
                 }
 
+                // 길드 가입 요청 목록에 있는 모든 UI 비활성화
+                guildApplicantsPage.DeactivateAll();
+
                 List<TransactionValue> transcationList = new List<TransactionValue>();
                 List<GuildMemberData> guildMemberDataList = new List<GuildMemberData>();
 
@@ -107,6 +112,7 @@ public class BackendGuildSystem : MonoBehaviour
                     for (int i = 0; i < userData.Count; ++i)
                     {
                         guildMemberDataList[i].level = userData[i]["level"].ToString();
+                        guildApplicantsPage.Activate(guildMemberDataList[i]);
                         Debug.Log(guildMemberDataList[i].ToString());
                     }
                 });
@@ -117,6 +123,38 @@ public class BackendGuildSystem : MonoBehaviour
                 // try-catch 에러 출력
                 Debug.LogError(e);
             }
+        });
+    }
+
+    public void ApproveApplicant(string gamerInDate)
+    {
+        Backend.Guild.ApproveApplicantV3(gamerInDate, callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLogApproveApplicant(callback);
+
+                return;
+            }
+
+            Debug.Log($"길드 가입 요청 수락에 성공했습니다. : {callback}");
+        });
+    }
+
+    public void RejectApplicant(string gamerInDate)
+    {
+        Backend.Guild.RejectApplicantV3(gamerInDate, callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                // 운영진에게만 해당 버튼이 보일 예정이기 때문에
+                // 실패 사유가 404 하나 밖에 없다.
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "RejectApplicant");
+
+                return;
+            }
+
+            Debug.Log($"길드 가입 요청 거절에 성공했습니다. : {callback}");
         });
     }
 
@@ -187,6 +225,23 @@ public class BackendGuildSystem : MonoBehaviour
         }
 
         ErrorLog(message, "Guild_Failed_Log", "ApplyGuild");
+    }
+
+    private void ErrorLogApproveApplicant(BackendReturnObject callback)
+    {
+        string message = string.Empty;
+
+        switch (int.Parse(callback.GetStatusCode()))
+        {
+            case 412:
+                message = "길드 가입 요청을 수락하려는 유저가 이미 다른 길드 소속입니다.";
+                break;
+            case 429:
+                message = "길드에 더 이상 자리가 없습니다.";
+                break;
+        }
+
+        ErrorLog(message, "Guild_Failed_Log", "ApproveApplicant");
     }
 
     private void ErrorLog(string message, string behaviorType = "", string paramKey = "")
