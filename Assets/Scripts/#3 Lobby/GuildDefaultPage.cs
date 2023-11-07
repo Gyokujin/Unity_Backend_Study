@@ -35,4 +35,15 @@ public class GuildDefaultPage : MonoBehaviour
             guildPage.Activate(guildName);
         }
     }
+
+    public void OnClickMyGuildInfo()
+    {
+        backendGuildSystem.GetMyChildInfo();
+    }
+
+    public void SuccessMyGuildInfo()
+    {
+        bool isMaster = UserInfo.Data.nickname.Equals(backendGuildSystem.myGuildData.master.nickname);
+        guildPage.Activate(backendGuildSystem.myGuildData.guildName, isMaster);
+    }
 }

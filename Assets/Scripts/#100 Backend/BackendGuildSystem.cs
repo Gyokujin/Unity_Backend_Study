@@ -8,9 +8,13 @@ public class BackendGuildSystem : MonoBehaviour
     [SerializeField]
     private FadeEffect_TMP textLog;
     [SerializeField]
+    private GuildDefaultPage guildDefaultPage;
+    [SerializeField]
     private GuildCreatePage guildCreatePage;
     [SerializeField]
     private GuildApplicantsPage guildApplicantsPage;
+
+    public GuildData myGuildData { private set; get; } = new GuildData();
 
     public void CreateGuild(string guildName, int goodsCount = 1)
     {
@@ -155,6 +159,56 @@ public class BackendGuildSystem : MonoBehaviour
             }
 
             Debug.Log($"길드 가입 요청 거절에 성공했습니다. : {callback}");
+        });
+    }
+
+    public void GetMyChildInfo()
+    {
+        Backend.Guild.GetMyGuildInfoV3(callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "GetMyGuildInfoV3");
+                return;
+            }
+
+            try
+            {
+                LitJson.JsonData guildJson = callback.GetFlattenJSON()["guild"];
+
+                if (guildJson.Count <= 0)
+                {
+                    Debug.LogWarning("불러온 길드 데이터가 없습니다.");
+                    return;
+                }
+
+                myGuildData.guildName = guildJson["guildName"].ToString();
+                myGuildData.guildInDate = guildJson["inDate"].ToString();
+                myGuildData.memberCount = int.Parse(guildJson["memberCount"].ToString());
+
+                myGuildData.master = new GuildMemberData();
+                myGuildData.master.nickname = guildJson["masterNickname"].ToString();
+                myGuildData.master.inDate = guildJson["masterInDate"].ToString();
+
+                myGuildData.viceMasterList = new List<GuildMemberData>();
+
+                LitJson.JsonData viceJson = guildJson["viceMasterList"];
+                for (int i = 0; i < viceJson.Count; i++)
+                {
+                    GuildMemberData vice = new GuildMemberData();
+                    vice.nickname = viceJson[i]["nickname"].ToString();
+                    vice.inDate = viceJson[i]["inDate"].ToString();
+
+                    myGuildData.viceMasterList.Add(vice);
+                }
+
+                // 내 길드 정보 불러오기 완료 후 처리
+                guildDefaultPage.SuccessMyGuildInfo();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         });
     }
 
