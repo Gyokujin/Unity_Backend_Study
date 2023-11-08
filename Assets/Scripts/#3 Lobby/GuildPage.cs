@@ -8,12 +8,15 @@ public class GuildPage : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI textGuildName; // popup 상단에 출력되는 길드 이름 Text UI
     [SerializeField]
+    private Notice notice;
+    [SerializeField]
     private GameObject excutivesOption;
 
     private string guildName = string.Empty; // 길드 이름
 
     public void Activate(string guildName, bool isMaster = false)
     {
+        notice.Setup(isMaster);
         excutivesOption.SetActive(isMaster);
 
         gameObject.SetActive(true);

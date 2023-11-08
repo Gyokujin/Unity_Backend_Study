@@ -29,6 +29,9 @@ public class BackendGuildSystem : MonoBehaviour
 
             Debug.Log($"길드가 생성되었습니다. : {callback}");
 
+            // 길드 생성할 때 "길드 공지사항입니다."를 공지사항으로 기본 설정
+            SetNotice("길드 공지사항입니다.");
+
             // 길드 생성에 성공했을 때 호출
             guildCreatePage.SuccessCreateGuild();
         });
@@ -184,6 +187,7 @@ public class BackendGuildSystem : MonoBehaviour
 
                 myGuildData.guildName = guildJson["guildName"].ToString();
                 myGuildData.guildInDate = guildJson["inDate"].ToString();
+                myGuildData.notice = guildJson["NOTICE"].ToString();
                 myGuildData.memberCount = int.Parse(guildJson["memberCount"].ToString());
 
                 myGuildData.master = new GuildMemberData();
@@ -209,6 +213,23 @@ public class BackendGuildSystem : MonoBehaviour
             {
                 Debug.LogError(e);
             }
+        });
+    }
+
+    public void SetNotice(string notice)
+    {
+        Param param = new Param { { "NOTICE", notice } };
+
+        Backend.Guild.ModifyGuildV3(param, callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "SetNotice");
+
+                return;
+            }
+
+            Debug.Log($"길드 메타 데이터[공지사항] 변경에 성공했습니다. : {callback}");
         });
     }
 
