@@ -13,6 +13,8 @@ public class BackendGuildSystem : MonoBehaviour
     private GuildCreatePage guildCreatePage;
     [SerializeField]
     private GuildApplicantsPage guildApplicantsPage;
+    [SerializeField]
+    private GuildPage guildPage;
 
     public GuildData myGuildData { private set; get; } = new GuildData();
 
@@ -230,6 +232,47 @@ public class BackendGuildSystem : MonoBehaviour
             }
 
             Debug.Log($"길드 메타 데이터[공지사항] 변경에 성공했습니다. : {callback}");
+        });
+    }
+
+    public void GetGuildMemberList(string guildInDate)
+    {
+        Backend.Guild.GetGuildMemberListV3(guildInDate, callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "GetGuildMemberList");
+                return;
+            }
+
+            try
+            {
+                LitJson.JsonData memberJson = callback.GetFlattenJSON()["rows"];
+
+                if (memberJson.Count <= 0)
+                {
+                    Debug.LogWarning("불러온 길드원 데이터가 없습니다.");
+                    return;
+                }
+
+                guildPage.DeactivateAll();
+
+                foreach (LitJson.JsonData member in memberJson)
+                {
+                    GuildMemberData guildMember = new GuildMemberData();
+
+                    guildMember.position = member["position"].ToString();
+                    guildMember.nickname = member["nickname"].ToString();
+                    guildMember.goodsCount = int.Parse(member["totalGoods1Amount"].ToString());
+                    guildMember.lastLogin = member["lastLogin"].ToString();
+
+                    guildPage.Activate(guildMember);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         });
     }
 

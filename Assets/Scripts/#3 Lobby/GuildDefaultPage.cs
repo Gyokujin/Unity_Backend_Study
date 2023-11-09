@@ -32,7 +32,7 @@ public class GuildDefaultPage : MonoBehaviour
         else
         {
             // 길드 팝업 페이지 활성화
-            guildPage.Activate(guildName);
+            guildPage.Setup(guildName);
         }
     }
 
@@ -44,6 +44,6 @@ public class GuildDefaultPage : MonoBehaviour
     public void SuccessMyGuildInfo()
     {
         bool isMaster = UserInfo.Data.nickname.Equals(backendGuildSystem.myGuildData.master.nickname);
-        guildPage.Activate(backendGuildSystem.myGuildData.guildName, isMaster);
+        guildPage.Setup(backendGuildSystem.myGuildData.guildName, isMaster);
     }
 }
