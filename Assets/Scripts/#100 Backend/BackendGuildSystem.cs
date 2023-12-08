@@ -361,6 +361,8 @@ public class BackendGuildSystem : MonoBehaviour
                     return;
                 }
 
+                guildDefaultPage.DeactivateAll();
+
                 foreach (LitJson.JsonData guild in guildJson)
                 {
                     Backend.Guild.GetGuildInfoV3(guild["guildInDate"].ToString(), callback =>
@@ -384,6 +386,8 @@ public class BackendGuildSystem : MonoBehaviour
                         guildData.master = new GuildMemberData();
                         guildData.master.nickname = guildJson["masterNickname"].ToString();
                         guildData.memberCount = int.Parse(guildJson["memberCount"].ToString());
+
+                        guildDefaultPage.Activate(guildData);
                     });
                 }
             }

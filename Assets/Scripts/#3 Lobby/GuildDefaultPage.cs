@@ -12,6 +12,20 @@ public class GuildDefaultPage : MonoBehaviour
     [SerializeField]
     private FadeEffect_TMP textLog;
 
+    [SerializeField]
+    private GameObject guildPrefab;
+    [SerializeField]
+    private Transform parentContent;
+
+    private MemoryPool memoryPool;
+
+    void Awake()
+    {
+        memoryPool = new MemoryPool(guildPrefab, parentContent);
+
+        OnClickRefresh();
+    }
+
     public void OnClickSearchGuild()
     {
         string guildName = inputFieldGuildName.text;
@@ -50,5 +64,21 @@ public class GuildDefaultPage : MonoBehaviour
     {
         bool isMaster = UserInfo.Data.nickname.Equals(backendGuildSystem.otherGuildData.master.nickname);
         guildPage.Setup(backendGuildSystem.otherGuildData.guildName, isMaster, true);
+    }
+
+    public void OnClickRefresh()
+    {
+        backendGuildSystem.GetRandomGuildList();
+    }
+
+    public void Activate(GuildData guild)
+    {
+        GameObject item = memoryPool.ActivatePoolItem();
+        item.GetComponent<Guild>().Setup(guild);
+    }
+
+    public void DeactivateAll()
+    {
+        memoryPool.DeactivateAllPoolItems();
     }
 }
