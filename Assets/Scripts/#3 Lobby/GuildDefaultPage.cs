@@ -74,7 +74,7 @@ public class GuildDefaultPage : MonoBehaviour
     public void Activate(GuildData guild)
     {
         GameObject item = memoryPool.ActivatePoolItem();
-        item.GetComponent<Guild>().Setup(guild);
+        item.GetComponent<Guild>().Setup(backendGuildSystem, guild);
     }
 
     public void DeactivateAll()

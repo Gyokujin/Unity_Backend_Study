@@ -383,6 +383,7 @@ public class BackendGuildSystem : MonoBehaviour
 
                         GuildData guildData = new GuildData();
                         guildData.guildName = guildJson["guildName"].ToString();
+                        guildData.guildInDate = guildJson["inDate"].ToString();
                         guildData.master = new GuildMemberData();
                         guildData.master.nickname = guildJson["masterNickname"].ToString();
                         guildData.memberCount = int.Parse(guildJson["memberCount"].ToString());

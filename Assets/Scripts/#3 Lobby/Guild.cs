@@ -9,11 +9,22 @@ public class Guild : MonoBehaviour
     private TextMeshProUGUI textMasterNickname;
     [SerializeField]
     private TextMeshProUGUI textMemberCount;
-    
-    public void Setup(GuildData guildData)
+
+    private BackendGuildSystem backendGuildSystem;
+    private GuildData guildData;
+
+    public void Setup(BackendGuildSystem guildSystem, GuildData guildData)
     {
+        backendGuildSystem = guildSystem;
+        this.guildData = guildData;
+
         textGuildName.text = guildData.guildName;
         textMasterNickname.text = guildData.master.nickname;
         textMemberCount.text = $"{guildData.memberCount}/100";
+    }
+
+    public void OnClickGuildInfo()
+    {
+        backendGuildSystem.GetGuildInfo(guildData.guildInDate);
     }
 }
