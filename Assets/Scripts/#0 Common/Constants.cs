@@ -9,4 +9,6 @@ public class Constants
     public static readonly string GOODS_CHART_NAME = "재화차트";
 
     public static readonly int EXPIRATION_DAYS = 3;
+
+    public static readonly string RANDOM_GUILD_UUID = "67025560-95a6-11ee-b29f-d3328b21e848";
 }

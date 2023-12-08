@@ -31,8 +31,7 @@ public class GuildDefaultPage : MonoBehaviour
         }
         else
         {
-            // 길드 팝업 페이지 활성화
-            guildPage.Setup(guildName);
+            backendGuildSystem.GetGuildInfo(inDate);
         }
     }
 
@@ -45,5 +44,11 @@ public class GuildDefaultPage : MonoBehaviour
     {
         bool isMaster = UserInfo.Data.nickname.Equals(backendGuildSystem.myGuildData.master.nickname);
         guildPage.Setup(backendGuildSystem.myGuildData.guildName, isMaster);
+    }
+
+    public void SuccessGuildInfo()
+    {
+        bool isMaster = UserInfo.Data.nickname.Equals(backendGuildSystem.otherGuildData.master.nickname);
+        guildPage.Setup(backendGuildSystem.otherGuildData.guildName, isMaster, true);
     }
 }
