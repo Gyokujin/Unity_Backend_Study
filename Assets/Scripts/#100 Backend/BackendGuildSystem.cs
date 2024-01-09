@@ -15,6 +15,8 @@ public class BackendGuildSystem : MonoBehaviour
     private GuildApplicantsPage guildApplicantsPage;
     [SerializeField]
     private GuildPage guildPage;
+    [SerializeField]
+    private GuildMemberEdit guildMemberEdit;
 
     public GuildData myGuildData { private set; get; } = new GuildData();
     public GuildData otherGuildData { private set; get; } = new GuildData();
@@ -180,7 +182,7 @@ public class BackendGuildSystem : MonoBehaviour
         });
     }
 
-    public void GetMyChildInfo()
+    public void GetMyGuildInfo()
     {
         Backend.Guild.GetMyGuildInfoV3(callback =>
         {
@@ -275,6 +277,7 @@ public class BackendGuildSystem : MonoBehaviour
                     GuildMemberData guildMember = new GuildMemberData();
 
                     guildMember.position = member["position"].ToString();
+                    guildMember.inDate = member["gamerInDate"].ToString();
                     guildMember.nickname = member["nickname"].ToString();
                     guildMember.goodsCount = int.Parse(member["totalGoods1Amount"].ToString());
                     guildMember.lastLogin = member["lastLogin"].ToString();
@@ -396,6 +399,91 @@ public class BackendGuildSystem : MonoBehaviour
             {
                 Debug.LogError(e);
             }
+        });
+    }
+
+    public void WithdrawGuild()
+    {
+        Backend.Guild.WithdrawGuildV3(callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "WithdrawGuild");
+
+                return;
+            }
+
+            Debug.Log($"길드 탈퇴에 성공했습니다. : {callback}");
+
+            guildPage.SuccessWithdrawGuild();
+        });
+    }
+
+    public void ExpelMember(string gamerInDate)
+    {
+        Backend.Guild.ExpelMemberV3(gamerInDate, callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "ExpelMember");
+
+                return;
+            }
+
+            Debug.Log($"길드원을 길드에서 추방했습니다. : {callback}");
+
+            guildMemberEdit.SuccessMemberEdit();
+        });
+    }
+
+    public void NominateViceMaster(string gamerInData)
+    {
+        Backend.Guild.NominateViceMasterV3(gamerInData, callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "NominateViceMaster");
+
+                return;
+            }
+
+            Debug.Log($"부길드 마스터 임명에 성공했습니다. : {callback}");
+
+            guildMemberEdit.SuccessMemberEdit();
+        });
+    }
+
+    public void ReleaseViceMaster(string gamerInDate)
+    {
+        Backend.Guild.ReleaseViceMasterV3(gamerInDate, callback => 
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "ReleaseViceMaster");
+
+                return;
+            }
+
+            Debug.Log($"부길드 마스터 해제에 성공했습니다. : {callback}");
+
+            guildMemberEdit.SuccessMemberEdit();
+        });
+    }
+
+    public void NominateMaster(string gamerInDate)
+    {
+        Backend.Guild.NominateMasterV3(gamerInDate, callback =>
+        {
+            if (!callback.IsSuccess())
+            {
+                ErrorLog(callback.GetMessage(), "Guild_Failed_Log", "NominateMaster");
+
+                return;
+            }
+
+            Debug.Log($"길드 마스터 위임에 성공했습니다. : {callback}");
+
+            guildMemberEdit.SuccessMemberEdit();
         });
     }
 

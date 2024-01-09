@@ -51,7 +51,7 @@ public class GuildDefaultPage : MonoBehaviour
 
     public void OnClickMyGuildInfo()
     {
-        backendGuildSystem.GetMyChildInfo();
+        backendGuildSystem.GetMyGuildInfo();
     }
 
     public void SuccessMyGuildInfo()

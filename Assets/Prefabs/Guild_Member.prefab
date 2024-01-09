@@ -260,7 +260,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3378174441942571340}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 234664889652572375}
+        m_TargetAssemblyTypeName: GuildMember, Assembly-CSharp
+        m_MethodName: OnClickMemberEdit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &234664889652572375
 MonoBehaviour:
   m_ObjectHideFlags: 0
